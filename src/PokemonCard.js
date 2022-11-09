@@ -1,6 +1,6 @@
-import {StyleSheet, Image, Text, TouchableOpacity, View, PixelRatio} from "react-native";
+import {StyleSheet, Image, Text, TouchableOpacity, View} from "react-native";
 import {useCallback, useState} from "react";
-import { Avatar, Button, Card, Title, Paragraph} from "react-native-paper";
+import { Card } from "react-native-paper";
 import {typeColorsDesaturated} from "./colors";
 
 const PokemonCard = ({item, width, marginHorizontal, onPress}) => {
@@ -21,15 +21,15 @@ const PokemonCard = ({item, width, marginHorizontal, onPress}) => {
         <Card style={{marginRight: marginHorizontal, marginBottom: marginHorizontal, backgroundColor: mainTypeColor}}>
             <TouchableOpacity onPress={onLocalPress}>
                 <View onLayout={onLayout} style={[styles.contentContainer, {height, width}]}>
-                    <View style={styles.topRow}>
+                    <View style={styles.idRow}>
                         <Image style={styles.pokeballIcon} source={require('../assets/pokeball_icon.png')}></Image>
                         <Text
                             style={styles.idText}>{"000".slice(regionalId.toString().length) + regionalId}</Text>
                     </View>
-                    <View style={styles.bottomRow}>
-                        <Image style={styles.pokemonSprite} source={{uri: item.sprites.front_default}}></Image>
-                        <Text style={styles.nameText}>{item.name}</Text>
-                    </View>
+                    <Image style={[styles.pokemonSprite, {width: width * 2 / 3, height: width * 2 / 3}]}
+                           source={{uri: item.sprites.front_default}}></Image>
+                    <Text style={styles.nameText}>{item.name}</Text>
+
                 </View>
             </TouchableOpacity>
         </Card>
@@ -40,17 +40,15 @@ const styles = StyleSheet.create({
     // Containers
     contentContainer: {
         flexDirection: "column",
-        justifyContent: "space-around",
-        borderWidth: 0,
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: 12,
         borderColor: "#222",
     },
-    topRow: {
+    idRow: {
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
-    },
-    centerRow: {
-        alignItems: 'center',
     },
     bottomRow: {
         justifyContent: "center",
@@ -68,8 +66,6 @@ const styles = StyleSheet.create({
     },
     // Sprites
     pokemonSprite: {
-        width: 64,
-        height: 64,
         resizeMode: 'contain',
     },
     pokeballIcon: {
