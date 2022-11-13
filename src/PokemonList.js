@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {
-    StyleSheet,
+    /* StyleSheet, */
     FlatList,
     SafeAreaView,
     useWindowDimensions,
@@ -8,12 +8,14 @@ import {
 } from 'react-native';
 import PokemonCard from "./PokemonCard";
 
-const PokemonList = ({navigation, columns=2, itemsHorizontalMargin = 24}) => {
+const PokemonList = ({navigation, itemsHorizontalMargin = 24}) => {
+    const width = useWindowDimensions().width;
+    const height = useWindowDimensions().height;
+    const columns = (width/height > 1) ? 5 : 2;
+    const cardsWidth = ((width / columns) - (itemsHorizontalMargin));
 
     const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState([]);
-    const width = useWindowDimensions().width;
-    const cardsWidth = ((width / columns) - (itemsHorizontalMargin));
 
     const fetchPokemonList = async (limit, offset) => {
         try {
@@ -26,7 +28,7 @@ const PokemonList = ({navigation, columns=2, itemsHorizontalMargin = 24}) => {
                 result.push(json);
             }
 
-            setData(result);
+            return result;
         } catch (error) {
             console.error(error);
         } finally {
@@ -36,7 +38,7 @@ const PokemonList = ({navigation, columns=2, itemsHorizontalMargin = 24}) => {
 
     useEffect(() => {
         //fetchPokemonList(251, 152);
-        fetchPokemonList(251, 152);
+        fetchPokemonList(251, 152).then((result) => setData(result));
     }, []);
 
     const renderItem = useCallback(({item}) => {
@@ -65,11 +67,13 @@ const PokemonList = ({navigation, columns=2, itemsHorizontalMargin = 24}) => {
     );
 }
 
+/*
 const styles = StyleSheet.create({
     list: {
         paddingHorizontal: 0,
         //backgroundColor: background,
     },
 });
+*/
 
 export default PokemonList;

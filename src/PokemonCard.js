@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     },
     // Texts
     idText: {
-        fontSize: 16,
+        fontSize: 12,
         textAlign: "center",
     },
     nameText: {
@@ -69,8 +69,8 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
     },
     pokeballIcon: {
-        width: 16,
-        height: 16,
+        width: 12,
+        height: 12,
         marginRight: 8,
     },
 });
