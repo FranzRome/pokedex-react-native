@@ -2,6 +2,7 @@
   "expo": {
     "name": "pokedex",
     "slug": "pokedex",
+    "owner": "franz_007",
     "version": "1.0.0",
     "orientation": "portrait",
     "assetBundlePatterns": [
