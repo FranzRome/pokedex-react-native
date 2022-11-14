@@ -1,14 +1,14 @@
-import {useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import {
     StyleSheet,
     Text,
     View,
     Image,
 } from 'react-native';
-import {background, typeColors, typeColorsDesaturated, text} from "./colors";
+import { background, typeColors, typeColorsDesaturated, text } from "./colors";
 
-const PokemonDetail = ({route}) => {
-    const {item} = route.params;
+const PokemonDetail = ({ route }) => {
+    const { item } = route.params;
     const regionalId = item.id - 151;
     const mainTypeColor = typeColorsDesaturated[item.types[0].type.name];
 
@@ -33,42 +33,42 @@ const PokemonDetail = ({route}) => {
     useEffect(() => {
         fetchSpecie();
     }, []
-)
+    )
 
-return (
-    <View style={styles.container}>
-        <View style={[styles.identitySection, {backgroundColor: mainTypeColor}]}>
-            <View style={styles.idNameContainer}>
-                <Image style={styles.pokeballIcon} source={require('../assets/pokeball_icon.png')}></Image>
-                <Text
-                    style={styles.idText}>{"000".slice(regionalId.toString().length) + regionalId.toString()}</Text>
-                <Text
-                    style={styles.idText}>{item.name.slice(0, 1).toUpperCase() + item.name.slice(1, item.name.length)}</Text>
+    return (
+        <View style={styles.container}>
+            <View style={[styles.identitySection, { backgroundColor: mainTypeColor }]}>
+                <View style={styles.idNameContainer}>
+                    <Image style={styles.pokeballIcon} source={require('../assets/pokeball_icon.png')}></Image>
+                    <Text
+                        style={styles.idText}>{"000".slice(regionalId.toString().length) + regionalId.toString()}</Text>
+                    <Text
+                        style={styles.idText}>{item.name.slice(0, 1).toUpperCase() + item.name.slice(1, item.name.length)}</Text>
+                </View>
+                <Image style={styles.pokemonSprite}
+                    source={{ uri: item.sprites.other['official-artwork'].front_default }}></Image>
+                <Text style={styles.nicknameText}>{isLoading ? 'Loading' : species.genera[7].genus}</Text>
             </View>
-            <Image style={styles.pokemonSprite}
-                   source={{uri: item.sprites.other['official-artwork'].front_default}}></Image>
-            <Text style={styles.nicknameText}>{isLoading ? 'Loading' : species.genera[0].genus}</Text>
+
+            <View style={styles.typeContainer}>
+                {
+                    item.types.map((type, index) => (
+                        <Text key={type + index}
+                            style={[styles.typeText, { backgroundColor: typeColors[type.type.name] }]}>
+                            {type.type.name}
+                        </Text>
+                    ))}
+            </View>
+
+            <View style={styles.measuresContainer}>
+                <Text style={{ color: text, marginRight: 60 }}>Height: {Number(item.height / 39.37).toFixed(2)} m</Text>
+                <Text style={{ color: text }}>Weight: {Number(item.weight / 10).toFixed(2)} Kg</Text>
+            </View>
+            <Text style={styles.flavorText}>{isLoading ? 'Loading' :
+                species.flavor_text_entries[0].flavor_text.replace(/(\r\n|\n|\r)/gm, ' ')}</Text>
         </View>
 
-        <View style={styles.typeContainer}>
-            {
-                item.types.map((type, index) => (
-                    <Text key={type + index}
-                          style={[styles.typeText, {backgroundColor: typeColors[type.type.name]}]}>
-                        {type.type.name}
-                    </Text>
-                ))}
-        </View>
-
-        <View style={styles.measuresContainer}>
-            <Text style={{color: text, marginRight: 60}}>Height: {Number(item.height / 39.37).toFixed(2)} m</Text>
-            <Text style={{color: text}}>Weight: {Number(item.weight / 10).toFixed(2)} Kg</Text>
-        </View>
-        <Text style={styles.flavorText}>{ isLoading ? 'Loading' :
-            species.flavor_text_entries[0].flavor_text.replace(/(\r\n|\n|\r)/gm, ' ')}</Text>
-    </View>
-
-);
+    );
 }
 
 const styles = StyleSheet.create({
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
         width: 26,
         height: 26,
         marginRight: 2,
-        transform: [{rotateZ: '-10deg'}],
+        transform: [{ rotateZ: '-10deg' }],
     },
 });
 
