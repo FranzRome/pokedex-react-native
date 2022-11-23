@@ -22,7 +22,7 @@ const PokemonDetail = ({ route }) => {
             const response = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${item.id}`);
             const json = await response.json();
             setSpecies(json);
-            console.log(species.keys);
+            //console.log(species.keys);
         } catch (error) {
             console.error(error);
         } finally {
@@ -30,11 +30,19 @@ const PokemonDetail = ({ route }) => {
         }
     }
 
+    const getEnglishFlavorText = (textEntries) => {
+        for (let i = 0; i < textEntries.length; i++) {
+            if (textEntries[i].language.name == 'en') {
+                return textEntries[i].flavor_text.replace(/(\r\n|\n|\r)/gm, ' ');
+            }
+        }
+
+        return '';
+    }
+
     useEffect(() => {
         fetchSpecie();
-    }, []
-    )
-
+    }, [])
     return (
         <View style={styles.container}>
             <View style={[styles.identitySection, { backgroundColor: mainTypeColor }]}>
@@ -65,7 +73,7 @@ const PokemonDetail = ({ route }) => {
                 <Text style={{ color: text }}>Weight: {Number(item.weight / 10).toFixed(2)} Kg</Text>
             </View>
             <Text style={styles.flavorText}>{isLoading ? 'Loading' :
-                species.flavor_text_entries[0].flavor_text.replace(/(\r\n|\n|\r)/gm, ' ')}</Text>
+                getEnglishFlavorText(species.flavor_text_entries)}</Text>
         </View>
 
     );
