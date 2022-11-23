@@ -1,45 +1,59 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
     /* StyleSheet, */
     FlatList,
     SafeAreaView,
     useWindowDimensions,
-    StatusBar, RefreshControl
+    StatusBar, RefreshControl, ActivityIndicator, View
 } from 'react-native';
 import PokemonCard from "./PokemonCard";
+
+const LIMIT = 20;
+const MAX_POKEMON = 100;
 
 const PokemonList = ({navigation, itemsHorizontalMargin = 24}) => {
     const width = useWindowDimensions().width;
     const height = useWindowDimensions().height;
+    const [offset, setOffset] = useState(1);
     const columns = (width/height > 1) ? 5 : 2;
     const cardsWidth = ((width / columns) - (itemsHorizontalMargin));
 
-    const [isLoading, setLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [data, setData] = useState([]);
 
-    const fetchPokemonList = async (limit, offset) => {
+    const fetchPokemonList = useCallback(async (limit, offset) => {
+        setIsLoading(true);
         try {
-            let result = [];
-
-            for (let i = offset; i <= limit; i++) {
-                const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${i}`);
-                const json = await response.json();
-                //console.log("Id: " + i);
-                result.push(json);
-            }
-
-            return result;
+            const results = [...Array.from({length: limit}).keys()]
+                .map(async (index) => {
+                    console.log(index + offset);
+                    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${index + offset + 151}`);
+                    return response.json();
+                });
+            return Promise.all(results);
         } catch (error) {
             console.error(error);
         } finally {
-            setLoading(false);
+            setIsLoading(false);
         }
-    }
+    }, []);
+
+    const retrievePokemons = useCallback((limit = LIMIT) => {
+        if (isLoading) {
+            return;
+        }
+        fetchPokemonList(limit, offset).then((result) => {
+            setData(d => [...d, ...result]);
+        });
+    }, [offset, isLoading]);
 
     useEffect(() => {
-        //fetchPokemonList(251, 152);
-        fetchPokemonList(251, 152).then((result) => setData(result));
-    }, []);
+        if (offset === MAX_POKEMON) {
+            retrievePokemons(offset % LIMIT);
+            return;
+        }
+        retrievePokemons();
+    }, [offset]);
 
     const renderItem = useCallback(({item}) => {
         return (
@@ -51,15 +65,37 @@ const PokemonList = ({navigation, itemsHorizontalMargin = 24}) => {
         );
     }, []);
 
+    const onEndReached = useCallback(() => {
+        setOffset(oldOffset => {
+            const newOffset = oldOffset + LIMIT >= MAX_POKEMON ? MAX_POKEMON : oldOffset + LIMIT;
+            if (newOffset === oldOffset) {
+                return oldOffset;
+            }
+            return newOffset;
+        });
+    }, []);
+
+    const getItemLayout = useCallback((data, index) => (
+        {length: cardsWidth - itemsHorizontalMargin, offset: (cardsWidth - itemsHorizontalMargin) * index, index}
+    ), []);
+
     return (
         <SafeAreaView style={{flex: 1, marginVertical: 0}}>
             <StatusBar/>
             <FlatList
-                keyExtractor={item => item.id}
-                refreshControl={<RefreshControl refreshing={isLoading}/>}
+                refreshControl={<RefreshControl refreshing={isLoading} tintColor="white" />}
                 numColumns={columns}
                 data={data}
                 renderItem={renderItem}
+                onEndReachedThreshold={0.2}
+                // getItemLayout={getItemLayout}
+                initialNumToRender={8}
+                onEndReached={onEndReached}
+                ListFooterComponent={
+                <View style={{padding: 16, justifyContent: 'center', alignItems: 'center'}}>
+                    {isLoading && <ActivityIndicator size="large" color="white"/>}
+                </View>
+                }
                 //style={{backgroundColor: background}}
                 contentContainerStyle={{paddingHorizontal: itemsHorizontalMargin/2, marginTop: 12}}
             />
