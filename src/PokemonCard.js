@@ -1,9 +1,10 @@
-import {StyleSheet, Image, Text, TouchableOpacity, View, useWindowDimensions} from "react-native";
-import {useCallback, useState} from "react";
+import { StyleSheet, Image, Text, TouchableOpacity, View, useWindowDimensions } from "react-native";
+import { useCallback, useState, useEffect } from "react";
 import { Card } from "react-native-paper";
-import {typeColorsDesaturated} from "./colors";
+import { typeColorsDesaturated } from "./colors";
+import Animated, { useSharedValue, useAnimatedStyle, withSpring, WithSpringConfig } from 'react-native-reanimated';
 
-const PokemonCard = ({item, width, marginHorizontal, onPress}) => {
+const PokemonCard = ({ item, width, marginHorizontal, onPress }) => {
 
     const mainTypeColor = typeColorsDesaturated[item.types[0].type.name];
     // const onLayout = useCallback(({nativeEvent}) => {
@@ -11,28 +12,54 @@ const PokemonCard = ({item, width, marginHorizontal, onPress}) => {
     // }, []);
     const regionalId = (item.id/* - 151*/).toString();
 
+    const offset = useSharedValue(1);
+
+    const springConfig = {
+        damping: 12,
+        mass: 3,
+        stiffness: 150,
+        overshootClamping: false,
+        restSpeedThreshold: 0.001,
+        restDisplacementThreshold: 0.001,
+    }
+
     // const [height, setHeight] = useState(0);
 
     const onLocalPress = () => {
         onPress(item);
     };
 
-    return (
-        <Card style={{marginRight: marginHorizontal, marginBottom: marginHorizontal, backgroundColor: mainTypeColor}}>
-            <TouchableOpacity onPress={onLocalPress}>
-                <View style={[styles.contentContainer, {height: width, width}]}>
-                    <View style={styles.idRow}>
-                        <Image style={styles.pokeballIcon} source={require('../assets/pokeball_icon.png')}></Image>
-                        <Text
-                            style={styles.idText}>{"000".slice(regionalId.toString().length) + regionalId}</Text>
-                    </View>
-                    <Image style={[styles.pokemonSprite, {width: width * 2 / 3, height: width * 2 / 3}]}
-                           source={{uri: item.sprites.front_default}}></Image>
-                    <Text style={styles.nameText}>{item.name}</Text>
+    const animatedStyles = useAnimatedStyle(() => {
+        return {
+            transform: [{
+                translateX: offset.value * 255
+            }],
+            opacity: 1 - offset.value
+        };
+    });
 
-                </View>
-            </TouchableOpacity>
-        </Card>
+    useEffect(() => {
+        offset.value = withSpring(0, springConfig);
+    }, [])
+
+    return (
+        <Animated.View style={[styles.container, animatedStyles]}>
+            <Card style={{ marginRight: marginHorizontal, marginBottom: marginHorizontal, backgroundColor: mainTypeColor }}>
+                <TouchableOpacity onPress={onLocalPress}>
+                    <View style={[styles.contentContainer, { height: width, width }]}>
+                        <View style={styles.idRow}>
+                            <Image style={styles.pokeballIcon} source={require('../assets/pokeball_icon.png')}></Image>
+                            <Text
+                                style={styles.idText}>{"000".slice(regionalId.toString().length) + regionalId}</Text>
+                        </View>
+                        <Image style={[styles.pokemonSprite, { width: width * 2 / 3, height: width * 2 / 3 }]}
+                            source={{ uri: item.sprites.front_default }}></Image>
+                        <Text style={styles.nameText}>{item.name}</Text>
+
+                    </View>
+                </TouchableOpacity>
+            </Card>
+        </Animated.View>
     );
 }
 

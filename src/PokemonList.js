@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     /* StyleSheet, */
     FlatList,
@@ -11,11 +11,11 @@ import PokemonCard from "./PokemonCard";
 const LIMIT = 20;
 const MAX_POKEMON = 100;
 
-const PokemonList = ({navigation, itemsHorizontalMargin = 24}) => {
+const PokemonList = ({ navigation, itemsHorizontalMargin = 24 }) => {
     const width = useWindowDimensions().width;
     const height = useWindowDimensions().height;
     const [offset, setOffset] = useState(1);
-    const columns = (width/height > 1) ? 5 : 2;
+    const columns = (width / height > 1) ? 5 : 2;
     const cardsWidth = ((width / columns) - (itemsHorizontalMargin));
 
     const [isLoading, setIsLoading] = useState(false);
@@ -24,9 +24,9 @@ const PokemonList = ({navigation, itemsHorizontalMargin = 24}) => {
     const fetchPokemonList = useCallback(async (limit, offset) => {
         setIsLoading(true);
         try {
-            const results = [...Array.from({length: limit}).keys()]
+            const results = [...Array.from({ length: limit }).keys()]
                 .map(async (index) => {
-                    console.log(index + offset);
+                    //console.log(index + offset);
                     const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${index + offset + 151}`);
                     return response.json();
                 });
@@ -34,7 +34,9 @@ const PokemonList = ({navigation, itemsHorizontalMargin = 24}) => {
         } catch (error) {
             console.error(error);
         } finally {
+            console.log(isLoading);
             setIsLoading(false);
+            console.log(isLoading);
         }
     }, []);
 
@@ -55,13 +57,13 @@ const PokemonList = ({navigation, itemsHorizontalMargin = 24}) => {
         retrievePokemons();
     }, [offset]);
 
-    const renderItem = useCallback(({item}) => {
+    const renderItem = useCallback(({ item }) => {
         return (
             <PokemonCard item={item} marginHorizontal={itemsHorizontalMargin} width={cardsWidth} onPress={(item) => {
                 //console.log(item.sprites);
-                navigation.navigate('Detail', {item});
+                navigation.navigate('Detail', { item });
             }
-            }/>
+            } />
         );
     }, []);
 
@@ -76,28 +78,28 @@ const PokemonList = ({navigation, itemsHorizontalMargin = 24}) => {
     }, []);
 
     const getItemLayout = useCallback((data, index) => (
-        {length: cardsWidth - itemsHorizontalMargin, offset: (cardsWidth - itemsHorizontalMargin) * index, index}
+        { length: cardsWidth + itemsHorizontalMargin, offset: (cardsWidth + itemsHorizontalMargin) * index, index }
     ), []);
 
     return (
-        <SafeAreaView style={{flex: 1, marginVertical: 0}}>
-            <StatusBar/>
+        <SafeAreaView style={{ flex: 1, marginVertical: 0 }}>
+            <StatusBar />
             <FlatList
                 refreshControl={<RefreshControl refreshing={isLoading} tintColor="white" />}
                 numColumns={columns}
                 data={data}
                 renderItem={renderItem}
                 onEndReachedThreshold={0.2}
-                // getItemLayout={getItemLayout}
+                getItemLayout={getItemLayout}
                 initialNumToRender={8}
                 onEndReached={onEndReached}
                 ListFooterComponent={
-                <View style={{padding: 16, justifyContent: 'center', alignItems: 'center'}}>
-                    {isLoading && <ActivityIndicator size="large" color="white"/>}
-                </View>
+                    <View style={{ padding: 16, justifyContent: 'center', alignItems: 'center' }}>
+                        {isLoading && <ActivityIndicator size="large" color="white" />}
+                    </View>
                 }
                 //style={{backgroundColor: background}}
-                contentContainerStyle={{paddingHorizontal: itemsHorizontalMargin/2, marginTop: 12}}
+                contentContainerStyle={{ paddingHorizontal: itemsHorizontalMargin / 2, marginTop: 12 }}
             />
         </SafeAreaView>
     );
