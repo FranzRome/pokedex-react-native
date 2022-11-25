@@ -1,0 +1,12 @@
+## This project prevents you to use npm, **use yarn** instead.
+
+### To run the project, you need to run the following commands:
+   - yarn install
+   - yarn start
+
+
+### To build app for android:
+ - eas build -p android
+
+### To build app for ios:
+ - eas build -p ios
