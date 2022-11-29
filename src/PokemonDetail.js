@@ -63,7 +63,7 @@ const PokemonDetail = ({ route }) => {
                     item.types.map((type, index) => (
                         <Text key={type + index}
                             style={[styles.typeText, { backgroundColor: typeColors[type.type.name] }]}>
-                            {type.type.name}
+                            {type.type.name.toUpperCase()}
                         </Text>
                     ))}
             </View>
