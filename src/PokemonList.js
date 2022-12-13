@@ -34,9 +34,9 @@ const PokemonList = ({ navigation, itemsHorizontalMargin = 24 }) => {
         } catch (error) {
             console.error(error);
         } finally {
-            console.log(isLoading);
+            //console.log(isLoading);
             setIsLoading(false);
-            console.log(isLoading);
+            //console.log(isLoading);
         }
     }, []);
 
@@ -68,6 +68,7 @@ const PokemonList = ({ navigation, itemsHorizontalMargin = 24 }) => {
     }, []);
 
     const onEndReached = useCallback(() => {
+        console.log('onEndReached');
         setOffset(oldOffset => {
             const newOffset = oldOffset + LIMIT >= MAX_POKEMON ? MAX_POKEMON : oldOffset + LIMIT;
             if (newOffset === oldOffset) {
@@ -89,7 +90,7 @@ const PokemonList = ({ navigation, itemsHorizontalMargin = 24 }) => {
                 numColumns={columns}
                 data={data}
                 renderItem={renderItem}
-                onEndReachedThreshold={0.2}
+                onEndReachedThreshold={1.2}
                 getItemLayout={getItemLayout}
                 initialNumToRender={8}
                 onEndReached={onEndReached}
