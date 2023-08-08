@@ -43,6 +43,7 @@ const PokemonDetail = ({ route }) => {
     useEffect(() => {
         fetchSpecie();
     }, [])
+
     return (
         <View style={styles.container}>
             <View style={[styles.identitySection, { backgroundColor: mainTypeColor }]}>
