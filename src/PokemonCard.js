@@ -49,13 +49,11 @@ const PokemonCard = ({ item, width, marginHorizontal, onPress }) => {
                     <View style={[styles.contentContainer, { height: width, width }]}>
                         <View style={styles.idRow}>
                             <Image style={styles.pokeballIcon} source={require('../assets/pokeball_icon.png')}></Image>
-                            <Text
-                                style={styles.idText}>{"000".slice(regionalId.toString().length) + regionalId}</Text>
+                            <Text style={styles.idText}>{"000".slice(regionalId.toString().length) + regionalId}</Text>
                         </View>
                         <Image style={[styles.pokemonSprite, { width: width * 2 / 3, height: width * 2 / 3 }]}
                             source={{ uri: item.sprites.front_default }}></Image>
                         <Text style={styles.nameText}>{item.name}</Text>
-
                     </View>
                 </TouchableOpacity>
             </Card>

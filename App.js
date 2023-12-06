@@ -7,6 +7,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import PokemonList from "./src/PokemonList";
 import PokemonDetail from "./src/PokemonDetail";
 import {background, statusBar, text} from "./src/colors";
+import { LogBox } from 'react-native';
+
+LogBox.ignoreLogs(['new NativeEventEmitter']);
 
 const theme = {
     dark: false,

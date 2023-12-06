@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import {
     /* StyleSheet, */
     FlatList,
@@ -7,15 +7,16 @@ import {
     StatusBar, RefreshControl, ActivityIndicator, View
 } from 'react-native';
 import PokemonCard from "./PokemonCard";
+import axios from 'axios';
 
 const LIMIT = 20;
 const MAX_POKEMON = 100;
 
-const PokemonList = ({ navigation, itemsHorizontalMargin = 24 }) => {
+const PokemonList = ({ navigation, itemsHorizontalMargin = 34 }) => {
     const width = useWindowDimensions().width;
     const height = useWindowDimensions().height;
     const [offset, setOffset] = useState(1);
-    const columns = (width / height > 1) ? 5 : 2;
+    const columns = 1;/*(width / height > 1) ? 5 : 2;*/
     const cardsWidth = ((width / columns) - (itemsHorizontalMargin));
 
     const [isLoading, setIsLoading] = useState(false);
@@ -23,11 +24,13 @@ const PokemonList = ({ navigation, itemsHorizontalMargin = 24 }) => {
 
     const fetchPokemonList = useCallback(async (limit, offset) => {
         setIsLoading(true);
+        //console.log('isLoading: ' + isLoading);
         try {
             const results = [...Array.from({ length: limit }).keys()]
                 .map(async (index) => {
                     //console.log(index + offset);
                     const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${index + offset + 151}`);
+                    setIsLoading(false);
                     return response.json();
                 });
             return Promise.all(results);
@@ -35,7 +38,7 @@ const PokemonList = ({ navigation, itemsHorizontalMargin = 24 }) => {
             console.error(error);
         } finally {
             //console.log(isLoading);
-            setIsLoading(false);
+            //
             //console.log(isLoading);
         }
     }, []);
@@ -54,6 +57,8 @@ const PokemonList = ({ navigation, itemsHorizontalMargin = 24 }) => {
             retrievePokemons(offset % LIMIT);
             return;
         }
+        setIsLoading(true);
+        //console.log(isLoading);
         retrievePokemons();
     }, [offset]);
 
@@ -90,13 +95,13 @@ const PokemonList = ({ navigation, itemsHorizontalMargin = 24 }) => {
                 numColumns={columns}
                 data={data}
                 renderItem={renderItem}
-                onEndReachedThreshold={1.2}
+                onEndReachedThreshold={0.8}
                 getItemLayout={getItemLayout}
                 initialNumToRender={8}
                 onEndReached={onEndReached}
                 ListFooterComponent={
                     <View style={{ padding: 16, justifyContent: 'center', alignItems: 'center' }}>
-                        {isLoading && <ActivityIndicator size="large" color="white" />}
+                        {isLoading ? <ActivityIndicator size="large" color="white" /> : <></>}
                     </View>
                 }
                 //style={{backgroundColor: background}}
