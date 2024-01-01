@@ -34,7 +34,7 @@ const PokemonCard = ({ item, width, marginHorizontal, onPress }) => {
             transform: [{
                 translateX: offset.value * 255
             }],
-            opacity: 1 - offset.value
+            opacity: 1 - offset.value,
         };
     });
 

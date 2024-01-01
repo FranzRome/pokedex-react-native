@@ -16,7 +16,7 @@ const PokemonList = ({ navigation, itemsHorizontalMargin = 34 }) => {
     const width = useWindowDimensions().width;
     const height = useWindowDimensions().height;
     const [offset, setOffset] = useState(1);
-    const columns = 1;/*(width / height > 1) ? 5 : 2;*/
+    const columns = (width / height > 1) ? 5 : 2;
     const cardsWidth = ((width / columns) - (itemsHorizontalMargin));
 
     const [isLoading, setIsLoading] = useState(false);
@@ -44,15 +44,16 @@ const PokemonList = ({ navigation, itemsHorizontalMargin = 34 }) => {
     }, []);
 
     const retrievePokemons = useCallback((limit = LIMIT) => {
-        if (isLoading) {
+        /*if (isLoading) {
             return;
-        }
+        }*/
         fetchPokemonList(limit, offset).then((result) => {
             setData(d => [...d, ...result]);
         });
     }, [offset, isLoading]);
 
     useEffect(() => {
+        console.log('offset: ' + offset);
         if (offset === MAX_POKEMON) {
             retrievePokemons(offset % LIMIT);
             return;
@@ -73,6 +74,8 @@ const PokemonList = ({ navigation, itemsHorizontalMargin = 34 }) => {
     }, []);
 
     const onEndReached = useCallback(() => {
+        if(isLoading) return;
+
         console.log('onEndReached');
         setOffset(oldOffset => {
             const newOffset = oldOffset + LIMIT >= MAX_POKEMON ? MAX_POKEMON : oldOffset + LIMIT;
@@ -95,7 +98,7 @@ const PokemonList = ({ navigation, itemsHorizontalMargin = 34 }) => {
                 numColumns={columns}
                 data={data}
                 renderItem={renderItem}
-                onEndReachedThreshold={0.8}
+                onEndReachedThreshold={1.2}
                 getItemLayout={getItemLayout}
                 initialNumToRender={8}
                 onEndReached={onEndReached}
